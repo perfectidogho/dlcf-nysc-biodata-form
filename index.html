@@ -4,187 +4,67 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DLCF NYSC Ekiti</title>
-
 <style>
-:root {
-  --primary: #1f8f4c;
-  --secondary: #25d366;
-  --dark: #222;
-  --light: #f9f9f9;
-}
+:root { --primary:#1f8f4c; --secondary:#25d366; --dark:#222; --light:#f9f9f9; }
+* { box-sizing:border-box; font-family:"Segoe UI", system-ui, sans-serif; }
+body { background: linear-gradient(135deg,#e8fff2,#f4fdf8); margin:0; padding:20px; }
 
-* {
-  box-sizing: border-box;
-  font-family: "Segoe UI", system-ui, sans-serif;
-}
+.container { max-width:500px; margin:auto; background:#fff; border-radius:14px; padding:26px; box-shadow:0 15px 35px rgba(0,0,0,0.08);}
+h2 { text-align:center; margin-bottom:20px; color:var(--dark); }
+label { font-weight:600; display:block; margin:14px 0 6px; }
+input, select, button { width:100%; padding:13px; border-radius:10px; border:1.5px solid #ddd; font-size:15px; transition:0.25s; }
+input:focus, select:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 2px rgba(31,143,76,0.15); }
 
-body {
-  background: linear-gradient(135deg, #e8fff2, #f4fdf8);
-  margin: 0;
-  padding: 20px;
-}
+.gender-group { display:flex; gap:10px; }
+.gender-group label { flex:1; text-align:center; border:1.5px solid #ddd; padding:12px; border-radius:10px; cursor:pointer; }
+.gender-group input { display:none; }
+.gender-group input:checked + label { background:var(--primary); color:#fff; border-color:var(--primary); }
 
-.container {
-  max-width: 500px;
-  margin: auto;
-  background: #fff;
-  border-radius: 14px;
-  padding: 26px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-}
+button { background:var(--primary); color:#fff; border:none; margin-top:22px; font-weight:bold; cursor:pointer; }
+button.loading { pointer-events:none; opacity:0.7; }
+.loader { border:3px solid #fff; border-top:3px solid transparent; border-radius:50%; width:18px; height:18px; animation:spin 1s linear infinite; display:inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: var(--dark);
-}
+#otherState { margin-top:10px; }
+.hidden { display:none; }
 
-label {
-  font-weight: 600;
-  display: block;
-  margin: 14px 0 6px;
-}
+.success { text-align:center; padding:10px 5px; animation:fadeIn 0.8s ease; }
+.success p { line-height:1.6; margin-top:10px; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1;} }
 
-input, select, button {
-  width: 100%;
-  padding: 13px;
-  border-radius: 10px;
-  border: 1.5px solid #ddd;
-  font-size: 15px;
-  transition: 0.25s;
-}
+.whatsapp-btn { display:inline-block; margin-top:28px; background:var(--secondary); color:#fff; padding:15px 26px; border-radius:50px; font-weight:bold; text-decoration:none; animation:pulse 1.5s infinite;}
+@keyframes pulse { 0% {box-shadow:0 0 0 0 rgba(37,211,102,0.6);} 70% {box-shadow:0 0 0 18px rgba(37,211,102,0);} 100% {box-shadow:0 0 0 0 rgba(37,211,102,0);} }
 
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(31,143,76,0.15);
-}
+#adminContainer { display:none; max-width:900px; margin:40px auto; padding:20px; background:#fff; border-radius:14px; box-shadow:0 15px 35px rgba(0,0,0,0.08);}
+#dataTable { overflow-x:auto; margin-top:20px; }
+#dataTable table { border-collapse:collapse; width:100%; }
+#dataTable table th { background:#1f8f4c; color:#fff; padding:10px; border:1px solid #ddd; text-align:center; }
+#dataTable table td { padding:10px; border:1px solid #ddd; text-align:center; }
+#dataTable table tr:nth-child(even){ background:#f9f9f9; }
 
-/* Gender buttons */
-.gender-group {
-  display: flex;
-  gap: 10px;
-}
-
-.gender-group label {
-  flex: 1;
-  text-align: center;
-  border: 1.5px solid #ddd;
-  padding: 12px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.gender-group input {
-  display: none;
-}
-
-.gender-group input:checked + label {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-}
-
-/* Button */
-button {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  margin-top: 22px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button.loading {
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.loader {
-  border: 3px solid #fff;
-  border-top: 3px solid transparent;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  animation: spin 1s linear infinite;
-  display: inline-block;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Other state spacing refinement */
-#otherState {
-  margin-top: 10px;
-}
-
-/* Utilities */
-.hidden {
-  display: none;
-}
-
-/* SUCCESS PAGE */
-.success {
-  text-align: center;
-  padding: 10px 5px;
-  animation: fadeIn 0.8s ease;
-}
-
-.success p {
-  line-height: 1.6;
-  margin-top: 10px;
-}
-
-@keyframes fadeIn {
-  from {opacity:0; transform: translateY(20px);}
-  to {opacity:1;}
-}
-
-.whatsapp-btn {
-  display: inline-block;
-  margin-top: 28px;
-  background: var(--secondary);
-  color: #fff;
-  padding: 15px 26px;
-  border-radius: 50px;
-  font-weight: bold;
-  text-decoration: none;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% {box-shadow: 0 0 0 0 rgba(37,211,102,0.6);}
-  70% {box-shadow: 0 0 0 18px rgba(37,211,102,0);}
-  100% {box-shadow: 0 0 0 0 rgba(37,211,102,0);}
-}
+.admin-link { text-align:center; margin-top:20px; }
+.admin-link a { font-size:13px; color:var(--primary); text-decoration:underline; cursor:pointer; }
 </style>
 </head>
-
 <body>
 
+<!-- Main Form -->
 <div class="container" id="formContainer">
   <h2>BIODATA FORM</h2>
-
   <form id="regForm">
     <label>First Name</label>
     <input type="text" required id="firstname">
-
     <label>Last Name</label>
     <input type="text" required id="lastname">
-
     <label>Gender</label>
     <div class="gender-group">
-      <input type="radio" name="gender" id="male" value="Male" required>
+      <input type="radio" name="gender" id="male" value="Male">
       <label for="male">Male</label>
-
       <input type="radio" name="gender" id="female" value="Female">
       <label for="female">Female</label>
     </div>
-
     <label>Phone Number</label>
     <input type="tel" required id="phone" placeholder="080XXXXXXXX">
-
     <label>State Posted</label>
     <select id="state" required>
       <option value="">Select</option>
@@ -193,12 +73,9 @@ button.loading {
       <option>Osun State</option>
       <option>Other</option>
     </select>
-
     <input type="text" id="otherState" class="hidden" placeholder="Enter your state">
-
     <label>Service Year</label>
     <select id="year" required></select>
-
     <label>Stream</label>
     <select id="stream" required>
       <option value="">Select</option>
@@ -206,13 +83,18 @@ button.loading {
       <option>B1</option><option>B2</option>
       <option>C1</option><option>C2</option>
     </select>
-
     <button type="submit" id="submitBtn">
       <span id="btnText">Submit</span>
     </button>
   </form>
+
+  <!-- Admin Button at bottom -->
+  <div class="admin-link">
+    <a href="#adminContainer" id="adminLink">I am an Admin / View Submissions</a>
+  </div>
 </div>
 
+<!-- Success Page -->
 <div class="container hidden success" id="successPage">
   <h2>🎉 Submission Successful!</h2>
   <p>
@@ -220,7 +102,6 @@ button.loading {
     Join our official WhatsApp community to stay connected, receive updates,
     and build meaningful fellowship.
   </p>
-
   <a class="whatsapp-btn"
      href="https://chat.whatsapp.com/JyNAIXgmXtG2QiwK8ARz2K"
      target="_blank">
@@ -228,12 +109,17 @@ button.loading {
   </a>
 </div>
 
-<script>
-const form = document.getElementById("regForm");
-const btn = document.getElementById("submitBtn");
-const btnText = document.getElementById("btnText");
+<!-- Admin Section -->
+<div class="container" id="adminContainer">
+  <h2>Admin Data Access</h2>
+  <label>Enter Access Code</label>
+  <input type="password" id="adminCode" placeholder="Enter secret code">
+  <button id="viewDataBtn">View All Data</button>
+  <div id="dataTable" class="hidden"></div>
+</div>
 
-/* Dynamic year */
+<script>
+// Dynamic year
 const yearSelect = document.getElementById("year");
 const now = new Date().getFullYear();
 [ now-1, now ].forEach(y=>{
@@ -242,23 +128,27 @@ const now = new Date().getFullYear();
   yearSelect.appendChild(o);
 });
 
-/* Other state toggle */
+// Other state toggle
 document.getElementById("state").addEventListener("change", e=>{
-  document.getElementById("otherState")
-    .classList.toggle("hidden", e.target.value !== "Other");
+  document.getElementById("otherState").classList.toggle("hidden", e.target.value !== "Other");
 });
 
-/* Submit */
+// Form submit
+const form = document.getElementById("regForm");
+const btn = document.getElementById("submitBtn");
+const btnText = document.getElementById("btnText");
 form.addEventListener("submit", e=>{
   e.preventDefault();
 
-  const phone = document.getElementById("phone").value;
-  const regex = /^0[789][01]\d{8}$/;
-
-  if(!regex.test(phone)){
-    alert("Please enter a Valid Nigerian phone number");
+  const genderSelected = document.querySelector("input[name=gender]:checked");
+  if(!genderSelected){
+    alert("Please select your gender!");
     return;
   }
+
+  const phone = document.getElementById("phone").value;
+  const regex = /^0[789][01]\d{8}$/;
+  if(!regex.test(phone)){ alert("Please enter a Valid Nigerian phone number"); return; }
 
   btn.classList.add("loading");
   btnText.innerHTML = '<span class="loader"></span>';
@@ -266,7 +156,7 @@ form.addEventListener("submit", e=>{
   const data = {
     firstname: firstname.value,
     lastname: lastname.value,
-    gender: document.querySelector("input[name=gender]:checked").value,
+    gender: genderSelected.value,
     phone,
     state: state.value === "Other" ? otherState.value : state.value,
     year: year.value,
@@ -282,7 +172,75 @@ form.addEventListener("submit", e=>{
     document.getElementById("successPage").classList.remove("hidden");
   });
 });
-</script>
 
+// Show admin container & hide form
+document.getElementById("adminLink").addEventListener('click', e=>{
+  e.preventDefault();
+  document.getElementById("formContainer").style.display="none"; // hide form
+  document.getElementById("adminContainer").style.display="block";
+  document.getElementById("adminContainer").scrollIntoView({behavior:"smooth"});
+});
+
+// Admin fetch data
+const correctCode = "Rotimi";
+const viewBtn = document.getElementById("viewDataBtn");
+viewBtn.addEventListener("click", async ()=>{
+  const enteredCode = document.getElementById("adminCode").value.trim();
+  if(!enteredCode){ alert("Please enter the access code!"); return; }
+
+  viewBtn.classList.add("loading");
+  const originalText = viewBtn.innerHTML;
+  viewBtn.innerHTML = '<span class="loader"></span> Loading...';
+
+  if(enteredCode !== correctCode){
+    alert("Incorrect code! Access denied.");
+    viewBtn.classList.remove("loading");
+    viewBtn.innerHTML = originalText;
+    return;
+  }
+
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxKS-jhdCyVFiIylpdCAxzgRJ7n0KRIa1JceWVgx99HU0MeJwwESXZKrXhCRijk-nnA/exec");
+    const data = await res.json();
+
+    const container = document.getElementById("dataTable");
+    if(!data.length){
+      container.innerHTML = "<p>No data available.</p>";
+    } else {
+      let html = `<table><tr>`;
+      Object.keys(data[0]).forEach(h=>{ html+=`<th>${h}</th>`; });
+      html += `</tr>`;
+      data.forEach(row=>{
+  html += `<tr>`;
+  // Loop through key/value so we can detect the "time" column
+  Object.entries(row).forEach(([key, value])=>{
+    if(key.toLowerCase().includes("time") && value){
+      // Format timestamp to Nigerian time, 12-hour clock
+      const date = new Date(value);
+      const nigeriaTime = date.toLocaleString("en-US", {
+        timeZone: "Africa/Lagos",
+        hour12: true,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      html += `<td>${nigeriaTime}</td>`;
+    } else {
+      html += `<td>${value}</td>`;
+    }
+  });
+  html += `</tr>`;
+});
+      html += `</table>`;
+      container.innerHTML = html;
+      container.classList.remove("hidden");
+    }
+  } catch(err){ alert("Error fetching data: "+err); }
+  finally { viewBtn.classList.remove("loading"); viewBtn.innerHTML = originalText; }
+});
+</script>
 </body>
 </html>
