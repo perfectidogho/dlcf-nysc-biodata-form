@@ -44,6 +44,9 @@ button.loading { pointer-events:none; opacity:0.7; }
 
 .admin-link { text-align:center; margin-top:20px; }
 .admin-link a { font-size:13px; color:var(--primary); text-decoration:underline; cursor:pointer; }
+
+/* Connection alert */
+#connectionAlert { font-weight:bold; color:#fff; padding:12px 0; text-align:center; z-index:9999; position:fixed; top:0; left:0; width:100%; display:none;}
 </style>
 </head>
 <body>
@@ -118,7 +121,28 @@ button.loading { pointer-events:none; opacity:0.7; }
   <div id="dataTable" class="hidden"></div>
 </div>
 
+<!-- Connection Alert -->
+<div id="connectionAlert"></div>
+
 <script>
+// Floating connection alert
+const connectionAlert = document.getElementById("connectionAlert");
+function updateConnectionStatus(){
+  if(navigator.onLine){
+    connectionAlert.style.background="#28a745"; // green
+    connectionAlert.innerText="✅ You are ONLINE";
+    connectionAlert.style.display="block";
+    setTimeout(()=>connectionAlert.style.display="none",3000);
+  } else {
+    connectionAlert.style.background="#dc3545"; // red
+    connectionAlert.innerText="❌ You are OFFLINE. Form submission disabled!";
+    connectionAlert.style.display="block";
+  }
+}
+updateConnectionStatus();
+window.addEventListener("online", updateConnectionStatus);
+window.addEventListener("offline", updateConnectionStatus);
+
 // Dynamic year
 const yearSelect = document.getElementById("year");
 const now = new Date().getFullYear();
@@ -137,15 +161,23 @@ document.getElementById("state").addEventListener("change", e=>{
 const form = document.getElementById("regForm");
 const btn = document.getElementById("submitBtn");
 const btnText = document.getElementById("btnText");
-form.addEventListener("submit", e=>{
-  e.preventDefault();
-
-  const genderSelected = document.querySelector("input[name=gender]:checked");
-  if(!genderSelected){
-    alert("Please select your gender!");
-    return;
+form.addEventListener("submit", e => {
+  // First: check connection
+  if(!navigator.onLine){
+    e.preventDefault(); // stop submission
+    connectionAlert.style.background = "#dc3545"; // red
+    connectionAlert.innerText = "❌ You are OFFLINE. Form submission disabled!";
+    connectionAlert.style.display = "block";
+    return; // stop execution
   }
 
+  e.preventDefault(); // safe to prevent default for normal processing
+
+  // Gender validation
+  const genderSelected = document.querySelector("input[name=gender]:checked");
+  if(!genderSelected){ alert("Please select your gender!"); return; }
+
+  // Phone validation
   const phone = document.getElementById("phone").value;
   const regex = /^0[789][01]\d{8}$/;
   if(!regex.test(phone)){ alert("Please enter a Valid Nigerian phone number"); return; }
@@ -164,19 +196,22 @@ form.addEventListener("submit", e=>{
   };
 
   fetch("https://script.google.com/macros/s/AKfycbxKS-jhdCyVFiIylpdCAxzgRJ7n0KRIa1JceWVgx99HU0MeJwwESXZKrXhCRijk-nnA/exec", {
-    method:"POST",
+    method: "POST",
     body: JSON.stringify(data)
   })
   .then(()=> {
     document.getElementById("formContainer").classList.add("hidden");
     document.getElementById("successPage").classList.remove("hidden");
+  })
+  .catch(()=> {
+    alert("Submission failed! Please check your connection.");
   });
 });
 
 // Show admin container & hide form
 document.getElementById("adminLink").addEventListener('click', e=>{
   e.preventDefault();
-  document.getElementById("formContainer").style.display="none"; // hide form
+  document.getElementById("formContainer").style.display="none";
   document.getElementById("adminContainer").style.display="block";
   document.getElementById("adminContainer").scrollIntoView({behavior:"smooth"});
 });
@@ -210,30 +245,26 @@ viewBtn.addEventListener("click", async ()=>{
       let html = `<table><tr>`;
       Object.keys(data[0]).forEach(h=>{ html+=`<th>${h}</th>`; });
       html += `</tr>`;
-      data.forEach(row=>{
-  html += `<tr>`;
-  // Loop through key/value so we can detect the "time" column
-  Object.entries(row).forEach(([key, value])=>{
-    if(key.toLowerCase().includes("time") && value){
-      // Format timestamp to Nigerian time, 12-hour clock
-      const date = new Date(value);
-      const nigeriaTime = date.toLocaleString("en-US", {
-        timeZone: "Africa/Lagos",
-        hour12: true,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
+      data.reverse().forEach(row=>{ // latest at top
+        html += `<tr>`;
+        Object.entries(row).forEach(([key,value])=>{
+          if(key.toLowerCase().includes("time") && value){
+            const date = new Date(value);
+            const nigeriaTime = date.toLocaleString("en-US", {
+              timeZone:"Africa/Lagos",
+              hour12:true,
+              year:"numeric",
+              month:"2-digit",
+              day:"2-digit",
+              hour:"2-digit",
+              minute:"2-digit",
+              second:"2-digit"
+            });
+            html += `<td>${nigeriaTime}</td>`;
+          } else { html += `<td>${value}</td>`; }
+        });
+        html += `</tr>`;
       });
-      html += `<td>${nigeriaTime}</td>`;
-    } else {
-      html += `<td>${value}</td>`;
-    }
-  });
-  html += `</tr>`;
-});
       html += `</table>`;
       container.innerHTML = html;
       container.classList.remove("hidden");
@@ -244,4 +275,3 @@ viewBtn.addEventListener("click", async ()=>{
 </script>
 </body>
 </html>
-
